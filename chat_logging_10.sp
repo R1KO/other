@@ -64,7 +64,7 @@ public OnPluginStart()
 	HookConVarChange((hCvar = CreateConVar("sm_chat_log_chat", "1", "Запись в лог команды sm_chat", FCVAR_PLUGIN)), OnLogChatChange);
 	g_bIsLog[3] = GetConVarBool(hCvar);
 
-	HookConVarChange((hCvar = CreateConVar("sm_chat_log_csay", "1", "Запись в лог команды sm_chat", FCVAR_PLUGIN)), OnLogCSayChange);
+	HookConVarChange((hCvar = CreateConVar("sm_chat_log_csay", "1", "Запись в лог команды sm_csay", FCVAR_PLUGIN)), OnLogCSayChange);
 	g_bIsLog[4] = GetConVarBool(hCvar);
 
 	HookConVarChange((hCvar = CreateConVar("sm_chat_log_tsay", "1", "Запись в лог команды sm_tsay", FCVAR_PLUGIN)), OnLogTSayChange);
