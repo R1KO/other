@@ -185,7 +185,7 @@ public OnClientPostAdminCheck(iClient)
 			SetTrieString(g_hDataTrie[iClient], "ip", sBuffer);
 			GetClientName(iClient, sBuffer, sizeof(sBuffer) - 1);
 			SQL_EscapeString(g_hDatabase, sBuffer, sBuffer2, sizeof(sBuffer2)-1);
-			SetTrieString(g_hDataTrie[iClient], "name", sBuffer);
+			SetTrieString(g_hDataTrie[iClient], "name", sBuffer2);
 		}
 	}
 }
