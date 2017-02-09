@@ -210,7 +210,7 @@
 #if SOURCEMOD_V_MINOR > 6
   public Action Say_Callback(int iClient, const char[] sCommand, int args)
 #else
-  public Action:Say_Callback(iClient, const String:sCommand, args)
+  public Action:Say_Callback(iClient, const String:sCommand[], args)
 #endif
 {
 	if(iClient)
@@ -341,7 +341,7 @@
 			  char sBuffer[64], sBuffer2[150];
 			  GetClientAuthId(iClient, AuthId_Steam2, sBuffer, sizeof(sBuffer)-1);
 			#else
-			  decl String:sBuffer[64], sBuffer2[150];
+			  decl String:sBuffer[64], String:sBuffer2[150];
 			  GetClientAuthString(iClient, sBuffer, sizeof(sBuffer)-1);
 			#endif
 			
