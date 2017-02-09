@@ -244,7 +244,12 @@
 					SQL_EscapeString(g_hDatabase, sText, sMsg, sizeof(sMsg));
 					
 					FormatEx(sQuery, sizeof(sQuery) - 1, "INSERT INTO `%s` (`auth`, `ip`, `name`, `team`, `alive`, `timestamp`, `type`, `message`) VALUES ('%s', '%s', '%s', '%d', '%d', '%d', '%s', '%s');", g_sTable, sAuth[0], sAuth[1], sName, GetClientTeam(iClient), IsPlayerAlive(iClient) ? 1:0, GetTime(), sCommand, sMsg);
-					SQL_TQuery(g_hDatabase, SQL_CheckError, sQuery);
+					#if SOURCEMOD_V_MINOR > 6
+					  g_hDatabase.Query(SQL_CheckError, sQuery);
+					#else
+					  SQL_TQuery(g_hDatabase, SQL_CheckError, sQuery);
+					#endif
+					
 					break;
 				}
 			}
@@ -280,7 +285,11 @@
 	#endif
 	
 	if(!SQL_CheckConfig("chatlog")) SetFailState("Database failure: Could not find Database conf \"chatlog\"");
-	SQL_TConnect(SQL_OnConnect, "chatlog");
+	#if SOURCEMOD_V_MINOR > 6
+	  Database.Connect(SQL_OnConnect, "chatlog");
+	#else
+	  SQL_TConnect(SQL_OnConnect, "chatlog");
+	#endif
 }
 
 #if SOURCEMOD_V_MINOR > 6
@@ -289,11 +298,11 @@
   public SQL_OnConnect(Handle:hDriver, Handle:hDatabase, const String:sError[], any:data)
 #endif
 {
-	#if SOURCEMOD_V_MINOR > 6
-	  if (hDatabase == null)
-	#else
-	  if (hDatabase == INVALID_HANDLE)
-	#endif
+#if SOURCEMOD_V_MINOR > 6
+	if (hDatabase == null)
+#else
+	if (hDatabase == INVALID_HANDLE)
+#endif
 		SetFailState("[Chat log] Не удалось подключиться к базе данных (%s)", sError);
 	else
 	{
