@@ -24,11 +24,11 @@
 #include <sourcemod>
 #include <sdktools>
 #pragma semicolon 1
-#if SOURCEMOD_V_MINOR > 6
+#if SOURCEMOD_V_MINOR > 7
   #pragma newdecls required
 #endif
 
-#if SOURCEMOD_V_MINOR > 6
+#if SOURCEMOD_V_MINOR > 7
   Database g_hDatabase;
   char g_sTable[20];
   
@@ -54,20 +54,20 @@
 	author = "R1KO",
 	version = "1.0"
 }
-#if SOURCEMOD_V_MINOR > 6
+#if SOURCEMOD_V_MINOR > 7
   public void OnPluginStart()
 #else
   public OnPluginStart()
 #endif
 {
-	#if SOURCEMOD_V_MINOR > 6
+	#if SOURCEMOD_V_MINOR > 7
 	  for(int i=1; i <= 64; i++)
 	#else
 	  for(new i=1; i <= 64; i++)
 	#endif
 		g_hDataTrie[i] = CreateTrie();
 
-	#if SOURCEMOD_V_MINOR > 6
+	#if SOURCEMOD_V_MINOR > 7
 	  ConVar hCvar;
 	#else
 	  new Handle:hCvar;
@@ -75,7 +75,7 @@
 
 	HookConVarChange((hCvar = CreateConVar("sm_chat_log_table", "chatlog", "Таблица логов чата в базе данных")), OnTableChange);
 	GetConVarString(hCvar, g_sTable, sizeof(g_sTable));
-	#if SOURCEMOD_V_MINOR > 6
+	#if SOURCEMOD_V_MINOR > 7
 	  delete hCvar;
 	#else
 	  CloseHandle(hCvar);
@@ -83,7 +83,7 @@
 
 	HookConVarChange((hCvar = CreateConVar("sm_chat_log_triggers", "0", "Запись в лог чат-триггеров")), OnLogTriggersChange);
 	g_bIsLog[9] = GetConVarBool(hCvar);
-	#if SOURCEMOD_V_MINOR > 6
+	#if SOURCEMOD_V_MINOR > 7
 	  delete hCvar;
 	#else
 	  CloseHandle(hCvar);
@@ -91,7 +91,7 @@
 
 	HookConVarChange((hCvar = CreateConVar("sm_chat_log_say", "1", "Запись в лог общего чата")), OnLogSayChange);
 	g_bIsLog[0] = GetConVarBool(hCvar);
-	#if SOURCEMOD_V_MINOR > 6
+	#if SOURCEMOD_V_MINOR > 7
 	  delete hCvar;
 	#else
 	  CloseHandle(hCvar);
@@ -99,7 +99,7 @@
 
 	HookConVarChange((hCvar = CreateConVar("sm_chat_log_say_team", "1", "Запись в лог командного чата")), OnLogSayTeamChange);
 	g_bIsLog[1] = GetConVarBool(hCvar);
-	#if SOURCEMOD_V_MINOR > 6
+	#if SOURCEMOD_V_MINOR > 7
 	  delete hCvar;
 	#else
 	  CloseHandle(hCvar);
@@ -107,7 +107,7 @@
 
 	HookConVarChange((hCvar = CreateConVar("sm_chat_log_sm_say", "1", "Запись в лог команды sm_say")), OnLogSmSayChange);
 	g_bIsLog[2] = GetConVarBool(hCvar);
-	#if SOURCEMOD_V_MINOR > 6
+	#if SOURCEMOD_V_MINOR > 7
 	  delete hCvar;
 	#else
 	  CloseHandle(hCvar);
@@ -115,7 +115,7 @@
 	
 	HookConVarChange((hCvar = CreateConVar("sm_chat_log_chat", "1", "Запись в лог команды sm_chat")), OnLogChatChange);
 	g_bIsLog[3] = GetConVarBool(hCvar);
-	#if SOURCEMOD_V_MINOR > 6
+	#if SOURCEMOD_V_MINOR > 7
 	  delete hCvar;
 	#else
 	  CloseHandle(hCvar);
@@ -123,7 +123,7 @@
 
 	HookConVarChange((hCvar = CreateConVar("sm_chat_log_csay", "1", "Запись в лог команды sm_csay")), OnLogCSayChange);
 	g_bIsLog[4] = GetConVarBool(hCvar);
-	#if SOURCEMOD_V_MINOR > 6
+	#if SOURCEMOD_V_MINOR > 7
 	  delete hCvar;
 	#else
 	  CloseHandle(hCvar);
@@ -131,7 +131,7 @@
 
 	HookConVarChange((hCvar = CreateConVar("sm_chat_log_tsay", "1", "Запись в лог команды sm_tsay")), OnLogTSayChange);
 	g_bIsLog[5] = GetConVarBool(hCvar);
-	#if SOURCEMOD_V_MINOR > 6
+	#if SOURCEMOD_V_MINOR > 7
 	  delete hCvar;
 	#else
 	  CloseHandle(hCvar);
@@ -139,7 +139,7 @@
 
 	HookConVarChange((hCvar = CreateConVar("sm_chat_log_msay", "1", "Запись в лог команды sm_msay")), OnLogMSayChange);
 	g_bIsLog[6] = GetConVarBool(hCvar);
-	#if SOURCEMOD_V_MINOR > 6
+	#if SOURCEMOD_V_MINOR > 7
 	  delete hCvar;
 	#else
 	  CloseHandle(hCvar);
@@ -147,7 +147,7 @@
 
 	HookConVarChange((hCvar = CreateConVar("sm_chat_log_hsay", "1", "Запись в лог команды sm_hsay")), OnLogHSayChange);
 	g_bIsLog[7] = GetConVarBool(hCvar);
-	#if SOURCEMOD_V_MINOR > 6
+	#if SOURCEMOD_V_MINOR > 7
 	  delete hCvar;
 	#else
 	  CloseHandle(hCvar);
@@ -155,7 +155,7 @@
 
 	HookConVarChange((hCvar = CreateConVar("sm_chat_log_psay", "1", "Запись в лог команды sm_psay")), OnLogPSayChange);
 	g_bIsLog[8] = GetConVarBool(hCvar);
-	#if SOURCEMOD_V_MINOR > 6
+	#if SOURCEMOD_V_MINOR > 7
 	  delete hCvar;
 	#else
 	  CloseHandle(hCvar);
@@ -163,7 +163,7 @@
 
 	AutoExecConfig(true, "chat_log");
 
-	#if SOURCEMOD_V_MINOR > 6
+	#if SOURCEMOD_V_MINOR > 7
 	  for(int i=0; i < 9; i++)
 	#else
 	  for(new i=0; i < 9; i++)
@@ -173,7 +173,7 @@
 	HookEvent("player_changename", Event_NameChange);
 }
 
-#if SOURCEMOD_V_MINOR > 6
+#if SOURCEMOD_V_MINOR > 7
   public void OnTableChange(ConVar hCvar, const char[] oldValue, const char[] newValue)
 #else
   public OnTableChange(Handle:hCvar, const String:oldValue[], const String:newValue[])
@@ -183,7 +183,7 @@
 	OnConfigsExecuted();
 }
 
-#if SOURCEMOD_V_MINOR > 6
+#if SOURCEMOD_V_MINOR > 7
   public void OnLogTriggersChange(ConVar hCvar, const char[] oldValue, const char[] newValue) { g_bIsLog[9] = GetConVarBool(hCvar); }
   public void OnLogSayChange(ConVar hCvar, const char[] oldValue, const char[] newValue) { g_bIsLog[0] = GetConVarBool(hCvar); }
   public void OnLogSayTeamChange(ConVar hCvar, const char[] oldValue, const char[] newValue) { g_bIsLog[1] = GetConVarBool(hCvar); }
@@ -207,7 +207,7 @@
   public OnLogPSayChange(Handle:hCvar, const String:oldValue[], const String:newValue[]) g_bIsLog[8] = GetConVarBool(hCvar);
 #endif
 
-#if SOURCEMOD_V_MINOR > 6
+#if SOURCEMOD_V_MINOR > 7
   public Action Say_Callback(int iClient, const char[] sCommand, int args)
 #else
   public Action:Say_Callback(iClient, const String:sCommand[], args)
@@ -215,7 +215,7 @@
 {
 	if(iClient)
 	{
-		#if SOURCEMOD_V_MINOR > 6
+		#if SOURCEMOD_V_MINOR > 7
 		  char sText[255];
 		#else
 		  decl String:sText[255];
@@ -223,7 +223,7 @@
 		GetCmdArgString(sText, sizeof(sText));
 		if((IsChatTrigger() && g_bIsLog[9]) || !IsChatTrigger())
 		{
-			#if SOURCEMOD_V_MINOR > 6
+			#if SOURCEMOD_V_MINOR > 7
 			  for(int i=0; i < 9; i++)
 			#else
 			  for(new i=0; i < 9; i++)
@@ -231,7 +231,7 @@
 			{
 				if(StrEqual(sCommand, sSay[i], false) && g_bIsLog[i])
 				{
-					#if SOURCEMOD_V_MINOR > 6
+					#if SOURCEMOD_V_MINOR > 7
 					  char sQuery[1024], sName[150], sAuth[2][150], sMsg[511];
 					#else
 					  decl String:sQuery[1024], String:sName[150], String:sAuth[2][150], String:sMsg[511];
@@ -244,7 +244,7 @@
 					SQL_EscapeString(g_hDatabase, sText, sMsg, sizeof(sMsg));
 					
 					FormatEx(sQuery, sizeof(sQuery) - 1, "INSERT INTO `%s` (`auth`, `ip`, `name`, `team`, `alive`, `timestamp`, `type`, `message`) VALUES ('%s', '%s', '%s', '%d', '%d', '%d', '%s', '%s');", g_sTable, sAuth[0], sAuth[1], sName, GetClientTeam(iClient), IsPlayerAlive(iClient) ? 1:0, GetTime(), sCommand, sMsg);
-					#if SOURCEMOD_V_MINOR > 6
+					#if SOURCEMOD_V_MINOR > 7
 					  g_hDatabase.Query(SQL_CheckError, sQuery);
 					#else
 					  SQL_TQuery(g_hDatabase, SQL_CheckError, sQuery);
@@ -257,7 +257,7 @@
 	}
 }
 
-#if SOURCEMOD_V_MINOR > 6
+#if SOURCEMOD_V_MINOR > 7
   public void SQL_CheckError(Database hDB, DBResultSet hResults, const char[] sError, any data)
 #else
   public SQL_CheckError(Handle:hDB, Handle:hResults, const String:sError[], any:data)
@@ -266,13 +266,13 @@
 	if(sError[0]) LogError("[Chat log] Query Failed: %s", sError);
 }
 
-#if SOURCEMOD_V_MINOR > 6
+#if SOURCEMOD_V_MINOR > 7
   public void OnConfigsExecuted()
 #else
   public OnConfigsExecuted()
 #endif
 {
-	#if SOURCEMOD_V_MINOR > 6
+	#if SOURCEMOD_V_MINOR > 7
 	  if(g_hDatabase != null) {
 	  	delete g_hDatabase;
 	  	g_hDatabase = null;
@@ -285,20 +285,20 @@
 	#endif
 	
 	if(!SQL_CheckConfig("chatlog")) SetFailState("Database failure: Could not find Database conf \"chatlog\"");
-	#if SOURCEMOD_V_MINOR > 6
+	#if SOURCEMOD_V_MINOR > 7
 	  Database.Connect(SQL_OnConnect, "chatlog");
 	#else
 	  SQL_TConnect(SQL_OnConnect, "chatlog");
 	#endif
 }
 
-#if SOURCEMOD_V_MINOR > 6
+#if SOURCEMOD_V_MINOR > 7
   public void SQL_OnConnect(Database hDatabase, const char[] sError, any data)
 #else
   public SQL_OnConnect(Handle:hDriver, Handle:hDatabase, const String:sError[], any:data)
 #endif
 {
-#if SOURCEMOD_V_MINOR > 6
+#if SOURCEMOD_V_MINOR > 7
 	if (hDatabase == null)
 #else
 	if (hDatabase == INVALID_HANDLE)
@@ -312,7 +312,7 @@
 		
 		SQL_LockDatabase(g_hDatabase);
 		
-		#if SOURCEMOD_V_MINOR > 6
+		#if SOURCEMOD_V_MINOR > 7
 		  char sQuery[460];
 		#else
 		  decl String:sQuery[460];
@@ -326,7 +326,7 @@
 	}
 }
 
-#if SOURCEMOD_V_MINOR > 6
+#if SOURCEMOD_V_MINOR > 7
   public void OnClientPostAdminCheck(int iClient)
 #else
   public OnClientPostAdminCheck(iClient)
@@ -337,7 +337,7 @@
 		ClearTrie(g_hDataTrie[iClient]);
 		if(!IsFakeClient(iClient))
 		{
-			#if SOURCEMOD_V_MINOR > 6
+			#if SOURCEMOD_V_MINOR > 7
 			  char sBuffer[64], sBuffer2[150];
 			  GetClientAuthId(iClient, AuthId_Steam2, sBuffer, sizeof(sBuffer)-1);
 			#else
@@ -355,20 +355,20 @@
 	}
 }
 
-#if SOURCEMOD_V_MINOR > 6
+#if SOURCEMOD_V_MINOR > 7
   public Action Event_NameChange(Event hEvent, const char[] name, bool dontBroadcast)
 #else
   public Action:Event_NameChange(Handle:hEvent, const String:name[], bool:dontBroadcast)
 #endif
 {
-	#if SOURCEMOD_V_MINOR > 6
+	#if SOURCEMOD_V_MINOR > 7
 	  int iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
 	#else
 	  new iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
 	#endif
 	if(iClient && !IsFakeClient(iClient))
 	{
-		#if SOURCEMOD_V_MINOR > 6
+		#if SOURCEMOD_V_MINOR > 7
 		  char sNewName[MAX_NAME_LENGTH], sBuffer[150];
 		#else
 		  decl String:sNewName[MAX_NAME_LENGTH], String:sBuffer[150];
