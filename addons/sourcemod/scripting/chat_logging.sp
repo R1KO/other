@@ -10,6 +10,8 @@
 Database g_hDatabase;
 char g_sTable[32];
 bool g_bIsLog[10];
+ConVar g_hServerID;
+
 static const char g_sSay[][] = {"say", "say_team", "sm_say", "sm_chat", "sm_csay", "sm_tsay", "sm_msay", "sm_hsay", "sm_psay"};
 
 public Plugin myinfo = 
@@ -17,6 +19,8 @@ public Plugin myinfo =
 new Handle:g_hDatabase;
 new String:g_sTable[32];
 new bool:g_bIsLog[10];
+new Handle:g_hServerID;
+
 new const String:g_sSay[][] = {"say", "say_team", "sm_say", "sm_chat", "sm_csay", "sm_tsay", "sm_msay", "sm_hsay", "sm_psay"};
 
 public Plugin:myinfo = 
@@ -24,7 +28,7 @@ public Plugin:myinfo =
 {
 	name = "Chat Logging",
 	author = "R1KO",
-	version = "2.0"
+	version = "2.1"
 }
 
 #define SZF(%0) 	%0, sizeof(%0)
@@ -41,15 +45,16 @@ public OnPluginStart()
 	decl Handle:hCvar;
 	#endif
 
-	#if SOURCEMOD_V_MINOR > 7
 	hCvar = CreateConVar("sm_chat_log_table", "chatlog", "Таблица логов чата в базе данных");
+	#if SOURCEMOD_V_MINOR > 7
 	hCvar.AddChangeHook(OnTableChange);
 	hCvar.GetString(SZF(g_sTable));
 	#else
-	hCvar = CreateConVar("sm_chat_log_table", "chatlog", "Таблица логов чата в базе данных");
 	HookConVarChange(hCvar, OnTableChange);
 	GetConVarString(hCvar, SZF(g_sTable));
 	#endif
+
+	g_hServerID = CreateConVar("sm_chat_log_server_id", "1", "ID сервера");
 
 	RegConVar(hCvar, "sm_chat_log_triggers", "0", "Запись в лог чат-триггеров", OnLogTriggersChange, 9);
 	RegConVar(hCvar, "sm_chat_log_say", "1", "Запись в лог общего чата", OnLogSayChange, 0);
@@ -61,6 +66,8 @@ public OnPluginStart()
 	RegConVar(hCvar, "sm_chat_log_msay", "1", "Запись в лог команды sm_msay", OnLogMSayChange, 6);
 	RegConVar(hCvar, "sm_chat_log_hsay", "1", "Запись в лог команды sm_hsay", OnLogHSayChange, 7);
 	RegConVar(hCvar, "sm_chat_log_psay", "1", "Запись в лог команды sm_psay", OnLogPSayChange, 8);
+	
+	AutoExecConfig(true, "chat_logging");
 
 	#if SOURCEMOD_V_MINOR > 7
 	for(int i = 0; i < sizeof(g_sSay); ++i)
@@ -160,10 +167,12 @@ public Action:Say_Callback(iClient, const String:sCommand[], args)
 					char sError[256], sName[MAX_NAME_LENGTH], sAuth[32], sIP[16], sQuery[256];
 
 					GetClientAuthId(iClient, AuthId_Steam2, SZF(sAuth));
+					int iServerID = g_hServerID.IntValue;
 					#else
-					decl Handle:hStmt, String:sError[256], String:sName[MAX_NAME_LENGTH], String:sAuth[32], String:sIP[16], String:sQuery[256];
+					decl Handle:hStmt, String:sError[256], String:sName[MAX_NAME_LENGTH], String:sAuth[32], String:sIP[16], String:sQuery[256], iServerID;
 
 					GetClientAuthString(iClient, SZF(sAuth));
+					iServerID = GetConVarInt(g_hServerID);
 					#endif
 
 					GetClientName(iClient, SZF(sName));
@@ -172,8 +181,9 @@ public Action:Say_Callback(iClient, const String:sCommand[], args)
 					TrimString(sText);
 					StripQuotes(sText);
 
-					FormatEx(SZF(sQuery), "INSERT INTO `%s` (`auth`, `ip`, `name`, `team`, `alive`, `timestamp`, `type`, `message`) VALUES ('%s', '%s', ?, %i, %b, %i, '%s', ?);", g_sTable, sAuth, sIP, GetClientTeam(iClient), IsPlayerAlive(iClient), GetTime(), sCommand);
+					FormatEx(SZF(sQuery), "INSERT INTO `%s` (`server_id`, `auth`, `ip`, `name`, `team`, `alive`, `timestamp`, `type`, `message`) VALUES (%i, '%s', '%s', ?, %i, %b, %i, '%s', ?);", g_sTable, iServerID, sAuth, sIP, GetClientTeam(iClient), IsPlayerAlive(iClient), GetTime(), sCommand);
 
+					LogMessage("sQuery: '%s'", sQuery);
 					hStmt = SQL_PrepareQuery(g_hDatabase, sQuery, SZF(sError));
 					#if SOURCEMOD_V_MINOR > 7
 					if (hStmt != null)
@@ -192,12 +202,12 @@ public Action:Say_Callback(iClient, const String:sCommand[], args)
 						if (!SQL_Execute(hStmt))
 						{
 							SQL_GetError(hStmt, SZF(sError));
-							LogError("[Chat log] Fail SQL_Execute: %s", sError);
+							LogError("[CHAT LOG] Fail SQL_Execute: %s", sError);
 						}
 					}
 					else
 					{
-						LogError("[Chat log] Fail SQL_PrepareQuery: %s", sError);
+						LogError("[CHAT LOG] Fail SQL_PrepareQuery: %s", sError);
 					}
 
 					#if SOURCEMOD_V_MINOR > 7
@@ -237,7 +247,7 @@ public OnConfigsExecuted()
 
 	if(!SQL_CheckConfig("chatlog"))
 	{
-		SetFailState("[Chat log] Database failure: Could not find Database conf \"chatlog\"");
+		SetFailState("[CHAT LOG] Database failure: Could not find Database conf \"chatlog\"");
 		return;
 	}
 	#if SOURCEMOD_V_MINOR > 7
@@ -253,7 +263,7 @@ public void SQL_CheckError(Database hDB, DBResultSet hResults, const char[] sErr
 public SQL_CheckError(Handle:hDB, Handle:hResults, const String:sError[], any:data)
 #endif
 {
-	if(sError[0]) LogError("[Chat log] Query Failed: %s", sError);
+	if(sError[0]) LogError("[CHAT LOG] Query Failed: %s", sError);
 }
 
 #if SOURCEMOD_V_MINOR > 7
@@ -268,7 +278,7 @@ public SQL_OnConnect(Handle:hDriver, Handle:hDatabase, const String:sError[], an
 	if (hDatabase == INVALID_HANDLE)
 	#endif
 	{
-		SetFailState("[Chat log] Не удалось подключиться к базе данных (%s)", sError);
+		SetFailState("[CHAT LOG] Не удалось подключиться к базе данных (%s)", sError);
 		return;
 	}
 	else
@@ -284,6 +294,7 @@ public SQL_OnConnect(Handle:hDriver, Handle:hDatabase, const String:sError[], an
 
 		FormatEx(SZF(sQuery), "CREATE TABLE IF NOT EXISTS `%s` (\
 												`msg_id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, \
+												`server_id` INT UNSIGNED NOT NULL, \
 												`auth` VARCHAR(65) NOT NULL, \
 												`ip` VARCHAR(65) NOT NULL, \
 												`name` VARCHAR(65) NOT NULL, \
